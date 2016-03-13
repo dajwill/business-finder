@@ -40,7 +40,7 @@ angular.module('starter.controllers', ['ionic'])
         var zValue = scope.$eval(attrs.zoom);
         var lat = scope.$eval(attrs.lat);
         var lng = scope.$eval(attrs.lng);
-        var businesses = MyYelpAPI.retrieveYelp('', attrs.location, function(data)).data.businesses;
+        // var businesses = MyYelpAPI.retrieveYelp('', attrs.location, function(data)).data.businesses;
 
         var myLatlng = new google.maps.LatLng(lat,lng),
         mapOptions = {
@@ -48,7 +48,7 @@ angular.module('starter.controllers', ['ionic'])
               center: myLatlng
         },
         map = new google.maps.Map(element[0],mapOptions);
-        console.log(businesses);
+        // console.log(businesses);
       }
     };
 })
