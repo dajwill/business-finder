@@ -1,7 +1,39 @@
-angular.module('starter.controllers', ['ionic'])
+// angular.module('starter.controllers', ['ionic', 'ngCordova'])
 
-.controller('MapCtrl', ['$scope', 'MyYelpAPI', function($scope, MyYelpAPI) {
+.controller('MapCtrl', ['$scope', 'MyYelpAPI', function($scope, MyYelpAPI, $cordovaGeolocation) {
 // Code will be here
+  // $cordovaGeolocation.getCurrentPosition()
+  // var posOptions = {timeout: 10000, enableHighAccuracy: false};
+  //  $cordovaGeolocation
+  //    .getCurrentPosition(posOptions)
+  //
+  //    .then(function (position) {
+  //       var lat  = position.coords.latitude
+  //       var long = position.coords.longitude
+  //       console.log(lat + '   ' + long)
+  //    }, function(err) {
+  //       console.log(err)
+  //    });
+  //
+  //  var watchOptions = {timeout : 3000, enableHighAccuracy: false};
+  //  var watch = $cordovaGeolocation.watchPosition(watchOptions);
+  //
+  //  watch.then(
+  //     null,
+  //
+  //     function(err) {
+  //        console.log(err)
+  //     },
+  //
+  //     function(position) {
+  //        var lat  = position.coords.latitude
+  //        var long = position.coords.longitude
+  //        console.log(lat + '' + long)
+  //     }
+  //  );
+  //
+  //  watch.clearWatch();
+
   $scope.businesses = [];
   MyYelpAPI.retrieveYelp('', 'San+Francisc', function(data) {
       $scope.businesses = data.businesses;
@@ -33,24 +65,24 @@ angular.module('starter.controllers', ['ionic'])
 
 
 .directive('map', function(MyYelpAPI) {
-    return {
-      restrict: 'A',
-      link:function(scope, element, attrs){
+  return {
+    restrict: 'A',
+    link:function(scope, element, attrs){
 
-        var zValue = scope.$eval(attrs.zoom);
-        var lat = scope.$eval(attrs.lat);
-        var lng = scope.$eval(attrs.lng);
-        // var businesses = MyYelpAPI.retrieveYelp('', attrs.location, function(data)).data.businesses;
+      var zValue = scope.$eval(attrs.zoom);
+      var lat = scope.$eval(attrs.lat);
+      var lng = scope.$eval(attrs.lng);
+      // var businesses = MyYelpAPI.retrieveYelp('', attrs.location, function(data)).data.businesses;
 
-        var myLatlng = new google.maps.LatLng(lat,lng),
-        mapOptions = {
-              zoom: zValue,
-              center: myLatlng
-        },
-        map = new google.maps.Map(element[0],mapOptions);
-        // console.log(businesses);
-      }
-    };
+      var myLatlng = new google.maps.LatLng(lat,lng),
+      mapOptions = {
+            zoom: zValue,
+            center: myLatlng
+      },
+      map = new google.maps.Map(element[0],mapOptions);
+      // console.log(businesses);
+    }
+  };
 })
 
 // .controller('BusinessCtrl', ['$scope', 'MyYelpAPI', function($scope, MyYelpAPI) {
