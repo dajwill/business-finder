@@ -33,7 +33,6 @@
   }
 })
 
-
 .directive('map', function(MyYelpAPI) {
   return {
     restrict: 'A',
@@ -54,36 +53,6 @@
     }
   };
 })
-
-// .controller('BusinessCtrl', ['$scope', 'MyYelpAPI', function($scope, MyYelpAPI) {
-//   $scope.businesses = [];
-//   MyYelpAPI.retrieveYelp('', function(data) {
-//       $scope.businesses = data.businesses;
-//       console.log($scope.businesses);
-//   });
-//
-// }]).factory("MyYelpAPI", function($http) {
-//   return {
-//     "retrieveYelp": function(name, callback) {
-//       var method = 'GET';
-//       var url = 'http://api.yelp.com/v2/search';
-//       var params = {
-//         callback: 'angular.callbacks._0',
-//         location: 'San+Francisc',
-//         oauth_consumer_key: 'jav4PWJJXDTcDxnj_8iV8g', //Consumer Key
-//         oauth_token: 'kqN1AqyCR10HImtusXMbu2yeEGNf7L6R', //Token
-//         oauth_signature_method: "HMAC-SHA1",
-//         oauth_timestamp: new Date().getTime(),
-//         oauth_nonce: randomString(32, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'),
-//       };
-//       var consumerSecret = 'nhousV-f_M_DFH5q7l0rqFb_vQE'; //Consumer Secret
-//       var tokenSecret = 'YSJOlxzGtYF5LtRWobyF1Cr5FZE'; //Token Secret
-//       var signature = oauthSignature.generate(method, url, params, consumerSecret, tokenSecret, { encodeSignature: false});
-//       params['oauth_signature'] = signature;
-//       $http.jsonp(url, {params: params}).success(callback);
-//     }
-//   }
-// });
 
 function randomString(length, chars) {
   var result = '';

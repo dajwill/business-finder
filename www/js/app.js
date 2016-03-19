@@ -23,7 +23,14 @@ var app = angular.module('starter', ['ionic', 'ngCordova'])
   });
 })
 
-app.controller('MapController', function($scope, $cordovaGeolocation, $ionicLoading, YelpAPI) {
+app.config(function ($httpProvider) {
+  $httpProvider.defaults.headers.common = {};
+  $httpProvider.defaults.headers.post = {};
+  $httpProvider.defaults.headers.put = {};
+  $httpProvider.defaults.headers.patch = {};
+});
+
+app.controller('MapController', function($scope, $cordovaGeolocation, $ionicLoading, $http) {
   ionic.Platform.ready(function(){
     $ionicLoading.show({
         template: '<ion-spinner icon="bubbles"></ion-spinner><br/>Acquiring location!'
@@ -39,12 +46,63 @@ app.controller('MapController', function($scope, $cordovaGeolocation, $ionicLoad
         var lat  = position.coords.latitude;
         var long = position.coords.longitude;
         var stringLatLong =lat +', ' + long
+        $scope.businesses = []
         console.log(stringLatLong);
         var myLatlng = new google.maps.LatLng(lat, long);
 
+        function findBusinesses(location){
+          params = {
+            v: 20130815,
+            client_id: 'J5L2S0TPCFBV44DGYMFEODW51QFXSDLQ5Q15LYGGGC3YJEXR',
+            client_secret: 'WH2NYJE0VNIP2J3MR5SPOWTWNRP2LC4FXP4ZKLT3QFPMFKPF',
+            limit: 10,
+            ll: location
+          };
+          $http.get('https://api.foursquare.com/v2/venues/explore', {params: params}).success(function(response){
+            $scope.businesses = []
+            angular.forEach(response.response.groups[0].items, function(item) {
+              $scope.businesses.push(item.venue)
+              item.venue.distance = calculateDistance(item.venue)
+              console.log(item.venue)
+            })
+            console.log($scope.businesses);
+          });
+        }
+
+        var businessMarkers = []
+
+        function getBusinessMarkers(businesses) {
+          angular.forEach(businesses, function(business) {
+            var businessMarker = new google.maps.Marker({
+              map: map,
+              animation: google.maps.Animation.DROP,
+              position: {lat: business.location.lat, lng: business.location.lng}
+            });
+            businessMarkers.push(businessMarker);
+          })
+        }
+
+        function removeBusinessMarkers() {
+          angular.forEach(businessMarkers, function(marker) {
+            marker.setMap(null);
+          })
+        }
+
+        function calculateDistance(venue) {
+          var userPos = {
+            lat: userLocation.position.lat(),
+            lng: userLocation.position.lng()
+          };
+          var userPos = new google.maps.LatLng(userLocation.position.lat(), userLocation.position.lng())
+          console.log($scope.businesses);
+          var businessPos = new google.maps.LatLng(venue.location.lat, venue.location.lng)
+          var distance = google.maps.geometry.spherical.computeDistanceBetween(userPos, businessPos)*0.000621371192;
+          return distance
+        }
+
         var mapOptions = {
             center: myLatlng,
-            zoom: 16,
+            zoom: 15,
             mapTypeId: google.maps.MapTypeId.ROADMAP
         };
 
@@ -53,10 +111,12 @@ app.controller('MapController', function($scope, $cordovaGeolocation, $ionicLoad
         userLocation = new google.maps.Marker({
           map: map,
           draggable: true,
-          // animation: google.maps.Animation.DROP,
+          animation: google.maps.Animation.DROP,
           position: {lat: lat, lng: long}
 
         });
+        findBusinesses(stringLatLong)
+        getBusinessMarkers($scope.businesses)
 
         // marker.addListener('click', toggleBounce);
         userLocation.addListener('dragend', function(e){
@@ -65,22 +125,14 @@ app.controller('MapController', function($scope, $cordovaGeolocation, $ionicLoad
           console.log(lat)
           console.log(long)
           stringLatLong =lat +', ' + long
-          $scope.businesses
-          YelpAPI.retrieveYelp('', stringLatLong, function(data) {
-              $scope.businesses = data.businesses;
-              console.log($scope.businesses);
-          });
+          console.log('Foursquare request');
+          findBusinesses(stringLatLong)
+          // businessMarkers = []
+          removeBusinessMarkers()
+          getBusinessMarkers($scope.businesses)
         })
-
         $scope.map = map;
         $ionicLoading.hide();
-
-        $scope.businesses = [];
-        YelpAPI.retrieveYelp('', stringLatLong, function(data) {
-            $scope.businesses = data.businesses;
-            console.log($scope.businesses);
-        });
-
     }, function(err) {
         $ionicLoading.hide();
         console.log(err);
@@ -90,11 +142,11 @@ app.controller('MapController', function($scope, $cordovaGeolocation, $ionicLoad
 
 app.factory("YelpAPI", function($http) {
   return {
-    "retrieveYelp": function(name, latLong, callback) {
+    "retrieveYelp": function(latLong, callback) {
       var method = 'GET';
       var url = 'http://api.yelp.com/v2/search';
       var params = {
-        callback: 'angular.callbacks._0',
+        callback: 'angulat_callback.0',
         // location: location,
         ll: latLong,
         oauth_consumer_key: 'jav4PWJJXDTcDxnj_8iV8g', //Consumer Key
