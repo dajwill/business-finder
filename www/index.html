@@ -3,6 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
+    <meta http-equiv="Content-Security-Policy" content="default-src *; script-src 'self' 'unsafe-inline' 'unsafe-eval' *; style-src  'self' 'unsafe-inline' *">
     <title></title>
 
     <link href="lib/ionic/css/ionic.css" rel="stylesheet">
@@ -20,24 +21,68 @@
     <script src="cordova.js"></script>
 
     <!-- your app's js -->
+    <script type="text/javascript" src="lib/font-awesome/fontawesome-markers.min.js">
+
+    </script>
     <script src="js/app.js"></script>
-    <script src="js/controller.js"></script>
-    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp"></script>
-    <script src="js/oauth-signature.min.js"></script>
   </head>
   <body ng-app="starter">
 
-    <ion-nav-bar class="bar-positive">
-    </ion-nav-bar>
-
-    <ion-nav-view></ion-nav-view>
-
-    <!-- <ion-pane>
+    <ion-pane>
       <ion-header-bar class="bar-stable">
-        <h1 class="title">Ionic Blank Starter</h1>
+        <h1 class="title">Locations</h1>
       </ion-header-bar>
-      <ion-content>
+      <ion-content ng-controller="MapController">
+        <div id="map" data-tap-disabled="true"></div>
+          <!-- <div ng-show="!isDefined(businesses)" class="search">
+            <button class="button button-balanced" ng-click="search()">
+              Find Businesses
+            </button>
+          </div> -->
+          <ion-list >
+            <ion-item ng-repeat="business in businesses | orderBy:'distance'">
+              <div class="row">
+                <div class="col-25">
+                  <!-- <img ng-if="imagePresent(business.image)" ng-src="{{business.image}}" class="responsive-image"> -->
+                  <img no-image ng-show="imagePresent(business.image)" ng-src="{product.imageUrl}}" class="responsive-image" />
+                  <img ng-if="!imagePresent(business.image)"src="http://placehold.it/100x100" class="responsive-image">
+                  <!-- <img ng-if="business.photos.count > 0" src="" class="responsive-image"> -->
+                </div>
+                <div class="col-60">
+                  <div class="business-info">
+                    <h2 class="venue-name">
+                      {{business.name}}
+                    </h2>
+                    <p>
+                      {{business.distance | number:2}} miles
+                    </p>
+                    <p>
+                      {{business.categories[0].name}}
+                    </p>
+                  </div>
+                </div>
+                <div class="col-15">
+
+                  <p ng-if="business.hours.isOpen" class="open">
+                    Open
+                  </p>
+                  <p ng-if="!business.hours.isOpen">
+                    Closed
+                  </p>
+                  <button class="button button-small button-balanced" ng-click="saveLocation(business)" ng-show="!isBusinessSaved(business)">
+                    Save
+                  </button>
+                  <button class="button button-small button-balanced" ng-click="deleteLocation(business)" ng-show="isBusinessSaved(business)">
+                    Remove
+                  </button>
+                </div>
+              </div>
+            </ion-item>
+          </ion-list>
       </ion-content>
-    </ion-pane> -->
+    </ion-pane>
+    <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false&v=3&libraries=geometry"></script>
+    <!-- <script src="https://maps.googleapis.com/maps/api/js?v=3.exp"></script> -->
+    <!-- <script src="https://maps-api-ssl.google.com/maps/api/js?libraries=places"></script> -->
   </body>
 </html>
