@@ -1,12 +1,42 @@
 angular.module('starter.controllers', ['ionic'])
 
-.controller('MapCtrl', ['$scope', 'MyYelpAPI', function($scope, MyYelpAPI) {
+.controller('MapCtrl', ['$scope', 'MyYelpAPI', function($scope, $cordovaGeolocation, MyYelpAPI) {
 // Code will be here
-  $scope.businesses = [];
-  MyYelpAPI.retrieveYelp('', 'San+Francisc', function(data) {
-      $scope.businesses = data.businesses;
-      console.log($scope.businesses);
+  // $scope.businesses = [];
+  // MyYelpAPI.retrieveYelp('', 'San+Francisc', function(data) {
+  //     $scope.businesses = data.businesses;
+  //     console.log($scope.businesses);
+  // });
+  var posOptions = {timeout: 10000, enableHighAccuracy: false};
+  $cordovaGeolocation
+    .getCurrentPosition(posOptions)
+    .then(function (position) {
+      var lat  = position.coords.latitude
+      var long = position.coords.longitude
+    }, function(err) {
+      // error
+    });
+
+
+  var watchOptions = {
+    timeout : 3000,
+    enableHighAccuracy: false // may cause errors if true
+  };
+
+  var watch = $cordovaGeolocation.watchPosition(watchOptions);
+  watch.then(
+    null,
+    function(err) {
+      // error
+    },
+    function(position) {
+      var lat  = position.coords.latitude
+      var long = position.coords.longitude
   });
+
+
+  watch.clearWatch();
+
 }]).factory("MyYelpAPI", function($http) {
   return {
     "retrieveYelp": function(name, location, callback) {
