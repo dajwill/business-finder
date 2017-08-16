@@ -4,6 +4,7 @@
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
 var app = angular.module('starter', ['ionic', 'ngCordova'])
+var KEYS = require('/KEYS.json')
 
 .run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
@@ -96,13 +97,7 @@ app.controller('MapController', function($scope, $cordovaGeolocation, $ionicLoad
             var map = new google.maps.Map(document.getElementById("map"), mapOptions);
 
             function findBusinesses(location){
-              params = {
-                v: 20130815,
-                client_id: 'J5L2S0TPCFBV44DGYMFEODW51QFXSDLQ5Q15LYGGGC3YJEXR',
-                client_secret: 'WH2NYJE0VNIP2J3MR5SPOWTWNRP2LC4FXP4ZKLT3QFPMFKPF',
-                limit: 10,
-                ll: location
-              };
+              var params = Object.assign({ v: 20130815, limit: 10, ll: location }, KEYS)
               $http.get('https://api.foursquare.com/v2/venues/explore', {params: params}).success(function(response){
                 $scope.businesses = []
                 angular.forEach(response.response.groups[0].items, function(item) {
